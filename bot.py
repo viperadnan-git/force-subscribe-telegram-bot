@@ -2,7 +2,7 @@ from pyrogram import Client, Filters, ChatPermissions
 from pyrogram import InlineKeyboardMarkup, InlineKeyboardButton
 import pyrogram.errors
 
-welcome_message = "Hey, I works only for @viperadnan"
+welcome_message = "Hey, I only works for @viperadnan"
 BOT_TOKEN = ""
 APP_ID = 
 API_HASH = ""
@@ -21,11 +21,11 @@ def onButtonPress(client, cb):
    except pyrogram.errors.exceptions.bad_request_400.UserNotParticipant:
      client.answer_callback_query(cb.id, text="Join the channel and press the button again.")
 
-@app.on_message(Filters.command(['start', 'help']))
+@app.on_message(Filters.command(['start', 'help']) & Filters.private)
 def start(client, message):
    message.reply_text(welcome_message)
 
-@app.on_message(Filters.text, group=1)
+@app.on_message(Filters.text & ~Filters.private, group=1)
 def SendMsg(client, message):
   user_id = message.from_user.id
   first_name = message.from_user.first_name
