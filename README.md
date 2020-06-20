@@ -1,12 +1,17 @@
 # Introduction
    **A Telegram Bot to force users to join a specific channel before sending messages in a group.**
- Find it on Telegram as [Scout](https://t.me/ScoutSpamBot)
+
+Find it on Telegram as [Scout](https://t.me/ScoutSpamBot)
+
 ## Todo
 - [ ] Add multiple channels support
 - [ ] Configure different groups with different channels
 - [ ] Clean messages after completion
 
-## Installing
+## Deploy
+
+Add APP_ID, API_HASH, BOT_TOKEN, channel_username in [bot.py](bot.py)
+
 - Clone this repo
 ```
 git clone https://github.com/viperadnan-git/promo-telegram-bot
@@ -24,6 +29,6 @@ pip3 install -r requirements.txt
 python3 bot.py
 ```
 
-## Credits
+## Thanks to
 - [PyroGram](https://PyroGram.org)
 - [Hasibul Kabir](https://GitHub.com/hasibulkabir)
