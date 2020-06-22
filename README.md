@@ -1,20 +1,17 @@
 # Introduction
-   **A Telegram Bot to force users to join a specific channel before sending messages in a group.**
-
-Find it on Telegram as [Scout](https://t.me/ScoutSpamBot)
+**A Telegram Bot to force users to join a specific channel before sending messages in a group.**
+- Find it on Telegram as [Eagle Scout](https://t.me/EagleScoutBot)
 
 ## Todo
 - [ ] Add multiple channels support
-- [ ] Configure different groups with different channels
+- [X] Configure different groups with different channels
 - [ ] Clean messages after completion
 
 ## Deploy
 
-Add APP_ID, API_HASH, BOT_TOKEN, channel_username in [bot.py](bot.py)
-
 - Clone this repo
 ```
-git clone https://github.com/viperadnan-git/promo-telegram-bot
+git clone https://github.com/viperadnan-git/eagle-telegram-bot
 ```
 - Change directory
 ```
@@ -24,6 +21,10 @@ cd promo-telegram-bot
 ```
 pip3 install -r requirements.txt
 ```
+
+### Configure
+Add APP_ID, API_HASH, BOT_TOKEN in [Config.py](Config.py) or in Env Variables.
+
 - Run bot.py
 ```
 python3 bot.py
