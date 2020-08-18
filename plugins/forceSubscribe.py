@@ -3,7 +3,7 @@ from pyrogram import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client as app
 import pyrogram.errors
 import sql_helpers.forceSubscribe_sql as sql
-
+from Config import Config
 
 
 @app.on_callback_query(Filters.regex("^onButtonPress$"))
@@ -32,7 +32,7 @@ def SendMsg(client, message):
     client.get_chat_member(CHANNEL_USERNAME, user_id)
     return
   except pyrogram.errors.exceptions.bad_request_400.UserNotParticipant:
-    if client.get_chat_member(message.chat.id, user_id).status in ("administrator", "creator"):
+    if client.get_chat_member(message.chat.id, user_id).status in ("administrator", "creator") or user_id in list(Config.SUDO_USERS):
       return
     message.reply_text(
       "[{}](tg://user?id={}), you are **not subscribed** to my [channel](https://t.me/{}) yet. Please [join](https://t.me/{}) and **press the button below** to unmute yourself.".format(first_name, user_id, CHANNEL_USERNAME, CHANNEL_USERNAME),
