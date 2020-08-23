@@ -5,7 +5,6 @@ from Config import Config
 plugins = dict(
     root="plugins",
     include=[
-        "start",
         "help",
         "forceSubscribe"
     ]
