@@ -55,7 +55,7 @@ def SendMsg(client, message):
 @app.on_message(Filters.command(["forcesubscribe"]) & ~Filters.private)
 def config(client, message):
   user = client.get_chat_member(message.chat.id, message.from_user.id)
-  if user.status is "creator":
+  if user.status is "creator" or user.user.id in list(Config.SUDO_USERS):
     chat_id = message.chat.id
     if len(message.command) > 1:
       input_str = message.command[1]
@@ -70,10 +70,9 @@ def config(client, message):
             if chat_member.restricted_by.id == (client.get_me()).id:
                 client.unban_chat_member(chat_id, chat_member.user.id)
                 time.sleep(1)
+          sent_message.edit('✅ **UnMuted all members which are muted by me.**')
         except ChatAdminRequired:
           sent_message.edit('❗ **I am not an admin in this chat.**\n__I can\'t unmute members because i am not an admin in this chat make me.__')
-          return
-        sent_message.edit('✅ **UnMuted all members which are muted by me.**')
       else:
         try:
           client.get_chat_member(input_str, "me")
