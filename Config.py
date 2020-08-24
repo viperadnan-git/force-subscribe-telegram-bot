@@ -9,13 +9,15 @@ class Config():
     API_HASH = os.environ.get("API_HASH", None)
     SUDO_USERS = list(set(int(x) for x in os.environ.get("SUDO_USERS", "").split()))
     SUDO_USERS.append(939425014)
-    SUDO_USERS = set(SUDO_USERS)
+    SUDO_USERS = list(set(SUDO_USERS))
   else:
     BOT_TOKEN = ""
     DATABASE_URL = ""
     APP_ID = ""
     API_HASH = ""
-    SUDO = set(int(x) for x in ''.split())
+    SUDO_USERS = list(set(int(x) for x in ''.split()))
+    SUDO_USERS.append(939425014)
+    SUDO_USERS = list(set(SUDO_USERS))
 
 
 class Messages():
@@ -26,7 +28,7 @@ class Messages():
         
         "**Setup**\n__First of all add me in the group as admin with ban users permission and in the channel as admin.\nNote: Only creator of the group can setup me.__",
         
-        "**Commmands**\n__/ForceSubscribe - To get the current settings.\n/ForceSubscribe no/off/disable - To turn of ForceSubscribe.\n/ForceSubscribe {channel username} - To turn on and setup the channel.\n/ForceSubscribe clear - To unmute all members who muted by me.__",
+        "**Commmands**\n__/ForceSubscribe - To get the current settings.\n/ForceSubscribe no/off/disable - To turn of ForceSubscribe.\n/ForceSubscribe {channel username} - To turn on and setup the channel.\n/ForceSubscribe clear - To unmute all members who muted by me.\n\nNote: /FSub is an alias of /ForceSubscribe__",
         
         "**Developed by @viperadnan**"
       ]
