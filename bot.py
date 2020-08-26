@@ -1,12 +1,14 @@
+import logging
 from pyrogram import Client
 from Config import Config
 
+logging.basicConfig(level=logging.INFO)
 
 plugins = dict(
     root="plugins",
     include=[
-        "help",
-        "forceSubscribe"
+        "forceSubscribe",
+        "help"
     ]
 )
 
