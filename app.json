@@ -3,12 +3,13 @@
   "name": "Force sub bot",
   "description": "Force sub bot",
   "keywords": [
-    "telegram"
+    "telegram",
+    "bots"
   ],
   "repository": "https://github.com/Devp73/force-subscribe-telegram-bot",
   "env": {
     "ENV": {
-      "description": "Setting this to ANYTHING will enable env variables",
+      "description": "",
       "value": "ANYTHING"
     },
     "BOT_TOKEN": {
@@ -30,7 +31,7 @@
   },
   "addons": [
     {
-      "plan": "heroku-postgresql",
+      "plan": "heroku-postgresql"
     }
   ]
 }
