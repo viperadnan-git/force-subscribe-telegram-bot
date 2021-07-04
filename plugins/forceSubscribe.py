@@ -21,7 +21,7 @@ def _onUnMuteRequest(client, cb):
       if chat_member.restricted_by.id == (client.get_me()).id:
           try:
             client.get_chat_member(channel, user_id)
-            client.unban_chat_member(chat_id, user_id)
+            client.restrict_chat_member(chat_id, user_id, ChatPermissions(can_send_messages=True))
             if cb.message.reply_to_message.from_user.id == user_id:
               cb.message.delete()
           except UserNotParticipant:
@@ -81,7 +81,7 @@ def config(client, message):
         try:
           for chat_member in client.get_chat_members(message.chat.id, filter="restricted"):
             if chat_member.restricted_by.id == (client.get_me()).id:
-                client.unban_chat_member(chat_id, chat_member.user.id)
+                client.restrict_chat_member(chat_id, chat_member.user.id, ChatPermissions(can_send_messages=True))
                 time.sleep(1)
           sent_message.edit('✅ **UnMuted all members who are muted by me.**')
         except ChatAdminRequired:

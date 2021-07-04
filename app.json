@@ -1,0 +1,37 @@
+
+{
+  "name": "Force sub bot",
+  "description": "Force sub bot",
+  "keywords": [
+    "telegram",
+    "bots"
+  ],
+  "repository": "https://github.com/Devp73/force-subscribe-telegram-bot",
+  "env": {
+    "ENV": {
+      "description": "",
+      "value": "ANYTHING"
+    },
+    "BOT_TOKEN": {
+      "description": "Your bot token, as a string.",
+      "value": ""
+    },
+    "APP_ID": {
+      "description": "",
+      "value": ""
+    },
+    "API_HASH": {
+      "description": "",
+      "value": ""
+    },
+    "SUDO_USERS": {
+      "description": "Sudo user_id seperated by spaces",
+      "value": "654455829 "
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ]
+}

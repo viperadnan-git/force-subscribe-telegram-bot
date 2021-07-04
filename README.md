@@ -36,3 +36,6 @@ python3 bot.py
 ## Thanks to
 - [PyroGram](https://PyroGram.org)
 - [Hasibul Kabir](https://GitHub.com/hasibulkabir) and [Spechide](https://GitHub.com/spechide) for helping.
+
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Devp73/force-subscribe-telegram-bot)
