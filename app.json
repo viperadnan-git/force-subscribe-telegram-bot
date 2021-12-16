@@ -1,0 +1,42 @@
+{
+    "name": "Force Subscribe Bot",
+    "description": "A Telegram bot to force members to join a specific channel before sending messages in a group.",
+    "keywords": [
+        "telegram",
+        "forcesubscribe",
+        "promoter",
+        "subscriber"
+    ],
+    "repository": "https://github.com/viperadnan-git/force-subscribe-telegram-bot",
+    "success_url": "https://github.com/viperadnan-git/force-subscribe-telegram-bot",
+    "env": {
+        "APP_ID": {
+            "description": "Get this value by creating an app on https://my.telegram.org!"
+        },
+        "API_HASH": {
+            "description": "Get this value by creating an app on https://my.telegram.org!"
+        },
+        "BOT_TOKEN": {
+            "description": "Bot token generated from https://t.me/BotFather (https://t.me/botfather)"
+        },
+        "SUDO_USERS": {
+            "description": "List of sudo user ids seperated by space.",
+            "value": "999197022 00000000"
+        }
+    },
+    "addons": [
+        {
+            "plan": "heroku-postgresql",
+            "options": {
+                "version": "12"
+            }
+        }
+    ],
+    "stack": "heroku-20",
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
+    }
+}
