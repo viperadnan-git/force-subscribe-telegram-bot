@@ -9,17 +9,23 @@
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
+### Installing Prerequisite
+- On Ubuntu 18.04 or later
+```sh
+sudo apt-get install git python3 python3-pip libpq-dev
+```
+
 ### Installation
 - Clone this repo
-```
+```sh
 git clone https://github.com/viperadnan-git/force-subscribe-telegram-bot
 ```
 - Change directory
-```
+```sh
 cd force-subscribe-telegram-bot
 ```
 - Install requirements
-```
+```sh
 pip3 install -r requirements.txt
 ```
 
@@ -28,7 +34,7 @@ Add [APP_ID](https://my.telegram.org/apps), [API_HASH](https://my.telegram.org/a
 
 ### Deploying
 - Run bot.py
-```
+```sh
 python3 bot.py
 ```
 
