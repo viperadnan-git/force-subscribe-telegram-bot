@@ -3,7 +3,7 @@ import logging
 from Config import Config
 from pyrogram import Client, filters
 from sql_helpers import forceSubscribe_sql as sql
-from pyrogram.types import ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton, Message
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, UsernameNotOccupied, ChatAdminRequired, PeerIdInvalid
 
 logging.basicConfig(level=logging.INFO)
@@ -15,17 +15,26 @@ def _onUnMuteRequest(client, cb):
   chat_id = cb.message.chat.id
   chat_db = sql.fs_settings(chat_id)
   if chat_db:
-    channel = chat_db.channel
+    channel_s = chat_db.channel.split(".")
     chat_member = client.get_chat_member(chat_id, user_id)
     if chat_member.restricted_by:
       if chat_member.restricted_by.id == (client.get_me()).id:
+        n_subscription_s = []
+        for channel in channel_s:
           try:
             client.get_chat_member(channel, user_id)
+          except UserNotParticipant:
+            n_subscription_s.append(channel)
+          if len(n_subscription_s) > 0:
+            client.answer_callback_query(
+              cb.id,
+              text="❗ Join the mentioned 'channel(s)' and press the 'UnMute Me' button again.",
+              show_alert=True
+            )
+          else:
             client.unban_chat_member(chat_id, user_id)
             if cb.message.reply_to_message.from_user.id == user_id:
               cb.message.delete()
-          except UserNotParticipant:
-            client.answer_callback_query(cb.id, text="❗ Join the mentioned 'channel' and press the 'UnMute Me' button again.", show_alert=True)
       else:
         client.answer_callback_query(cb.id, text="❗ You are muted by admins for other reasons.", show_alert=True)
     else:
@@ -44,13 +53,23 @@ def _check_member(client, message):
   if chat_db:
     user_id = message.from_user.id
     if not client.get_chat_member(chat_id, user_id).status in ("administrator", "creator") and not user_id in Config.SUDO_USERS:
-      channel = chat_db.channel
-      try:
-        client.get_chat_member(channel, user_id)
-      except UserNotParticipant:
+      channels = chat_db.channel.split(".")
+      n_subscription_s = []
+      for channel in channels:
+        try:
+          client.get_chat_member(channel, user_id)
+        except UserNotParticipant:
+          n_subscription_s.append(channel)
+        except ChatAdminRequired:
+          client.send_message(chat_id, text=f"❗ **I am not an admin in @{channel}**\n__Make me admin in the channel and add me again.\n#Leaving this chat...__")
+          sql.disapprove(chat_id)
+          client.leave_chat(chat_id)
+          return
+      if len(n_subscription_s) > 0:
+        mmo = "@" + " @".join(n_subscription_s)
         try:
           sent_message = message.reply_text(
-              "{}, you are **not subscribed** to my [channel](https://t.me/{}) yet. Please [join](https://t.me/{}) and **press the button below** to unmute yourself.".format(message.from_user.mention, channel, channel),
+              "{}, you are **not subscribed** to my channels: {mmo} yet. Please [join](https://t.me/{}) and **press the button below** to unmute yourself.".format(message.from_user.mention, channel, channel),
               disable_web_page_preview=True,
               reply_markup=InlineKeyboardMarkup(
                   [[InlineKeyboardButton("UnMute Me", callback_data="onUnMuteRequest")]]
@@ -60,15 +79,12 @@ def _check_member(client, message):
         except ChatAdminRequired:
           sent_message.edit("❗ **I am not an admin here.**\n__Make me admin with ban user permission and add me again.\n#Leaving this chat...__")
           client.leave_chat(chat_id)
-      except ChatAdminRequired:
-        client.send_message(chat_id, text=f"❗ **I am not an admin in @{channel}**\n__Make me admin in the channel and add me again.\n#Leaving this chat...__")
-        client.leave_chat(chat_id)
 
 
 @Client.on_message(filters.command(["forcesubscribe", "fsub"]) & ~filters.private)
 def config(client, message):
   user = client.get_chat_member(message.chat.id, message.from_user.id)
-  if user.status is "creator" or user.user.id in Config.SUDO_USERS:
+  if user.status == "creator" or user.user.id in Config.SUDO_USERS:
     chat_id = message.chat.id
     if len(message.command) > 1:
       input_str = message.command[1]
@@ -87,16 +103,17 @@ def config(client, message):
         except ChatAdminRequired:
           sent_message.edit('❗ **I am not an admin in this chat.**\n__I can\'t unmute members because i am not an admin in this chat make me admin with ban user permission.__')
       else:
-        try:
-          client.get_chat_member(input_str, "me")
-          sql.add_channel(chat_id, input_str)
-          message.reply_text(f"✅ **Force Subscribe is Enabled**\n__Force Subscribe is enabled, all the group members have to subscribe this [channel](https://t.me/{input_str}) in order to send messages in this group.__", disable_web_page_preview=True)
-        except UserNotParticipant:
-          message.reply_text(f"❗ **Not an Admin in the Channel**\n__I am not an admin in the [channel](https://t.me/{input_str}). Add me as a admin in order to enable ForceSubscribe.__", disable_web_page_preview=True)
-        except (UsernameNotOccupied, PeerIdInvalid):
-          message.reply_text(f"❗ **Invalid Channel Username.**")
-        except Exception as err:
-          message.reply_text(f"❗ **ERROR:** ```{err}```")
+        swo, wso = get_valid_channels(message)
+        if not swo:
+          message.reply_text(wso, disable_web_page_preview=True)
+          return
+        input_str = ".".join(wso)
+        mmo = "@" + " @".join(wso)
+        sql.add_channel(chat_id, input_str)
+        message.reply_text(
+          f"✅ **Force Subscribe is Enabled**\n__Force Subscribe is enabled, all the group members have to subscribe these {mmo} channels in order to send messages in this group.__",
+          disable_web_page_preview=True
+        )
     else:
       if sql.fs_settings(chat_id):
         message.reply_text(f"✅ **Force Subscribe is enabled in this chat.**\n__For this [Channel](https://t.me/{sql.fs_settings(chat_id).channel})__", disable_web_page_preview=True)
@@ -104,3 +121,21 @@ def config(client, message):
         message.reply_text("❌ **Force Subscribe is disabled in this chat.**")
   else:
       message.reply_text("❗ **Group Creator Required**\n__You have to be the group creator to do that.__")
+
+
+def get_valid_channels(message: Message):
+  channel_pors = message.command[1:]
+  channel_srop = []
+  for input_str in channel_pors:
+    input_str = input_str.replace("@", "")
+    try:
+      client.get_chat_member(input_str, "me")
+      channel_srop.append(input_str)
+    except UserNotParticipant:
+      return False, f"❗ **Not an Admin in the Channel**\n__I am not an admin in the [channel](https://t.me/{input_str}). Add me as a admin in order to enable ForceSubscribe.__"
+    except (UsernameNotOccupied, PeerIdInvalid):
+      message.reply_text()
+      return False, f"❗ **Invalid Channel Username.**"
+    except Exception as err:
+      return False, f"❗ **ERROR:** ```{err}```"
+  return True, channel_srop
